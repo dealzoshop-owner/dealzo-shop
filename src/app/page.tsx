@@ -1,62 +1,67 @@
-import Header from '@/components/Header';
-import SearchBar from '@/components/SearchBar';
-import { ShieldCheck, CheckCircle, TrendingDown } from 'lucide-react';
+import Image from "next/image";
+import { Search } from "lucide-react";
 
-export default function Home() {
+export default function ComingSoon() {
   return (
-    <div className="min-h-screen bg-[#f1f3f6] text-gray-900 font-sans">
-      <Header />
-
-      <main className="relative flex flex-col items-center justify-start pt-12 pb-32 px-4">
-
-        {/* Hero Section */}
-        <div className="w-full max-w-4xl mx-auto text-center space-y-8 mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900">
-            Compare Prices. <span className="text-[#2874F0]">Save Big.</span>
-          </h1>
-
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Stop overpaying. We track prices across Amazon, Flipkart, and more to find you the lowest price instantly.
-          </p>
-
-          <div className="pt-4">
-            <SearchBar />
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center px-4">
+        <div className="max-w-4xl w-full text-center">
+          {/* Logo */}
+          <div className="mb-8">
+            <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-blue-600 to-amber-600 bg-clip-text text-transparent">
+              Dealzo
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-600 mt-2">
+              India’s Smartest Price Comparison Engine
+            </p>
           </div>
 
-          {/* Trust Signals */}
-          <div className="flex flex-wrap justify-center gap-6 pt-8 text-sm font-medium text-gray-600">
-            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-              <ShieldCheck className="h-5 w-5 text-green-600" />
-              Safe & Secure
-            </div>
-            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-              <CheckCircle className="h-5 w-5 text-[#2874F0]" />
-              100% Genuine Products
-            </div>
-            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-              <TrendingDown className="h-5 w-5 text-[#FF9900]" />
-              Price Checked Today
+          {/* Big Search Bar (Fake but looks real) */}
+          <div className="max-w-2xl mx-auto mb-12">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Paste Amazon / Flipkart link or search product..."
+                className="w-full px-6 py-5 pr-16 text-lg rounded-2xl shadow-xl border border-gray-200 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                disabled
+              />
+              <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl">
+                <Search className="w-6 h-6" />
+              </button>
             </div>
           </div>
-        </div>
 
-        {/* Categories / Stores */}
-        <div className="w-full max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Trusted By Millions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {['Amazon', 'Flipkart', 'Walmart', 'BestBuy'].map(store => (
-              <div key={store} className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center font-bold text-xl text-gray-400 hover:text-gray-900 hover:shadow-md transition-all cursor-pointer">
-                {store}
+          {/* Countdown Style Message */}
+          <div className="space-y-6">
+            <p className="text-3xl md:text-4xl font-semibold text-gray-800">
+              Launching in a few hours...
+            </p>
+            <p className="text-xl text-gray-600">
+              Get ready for the lowest prices on Amazon, Flipkart, Myntra & 50+ stores
+            </p>
+
+            {/* Trust badges */}
+            <div className="flex flex-wrap justify-center gap-8 mt-12">
+              <div className="text-gray-600">
+                <span className="text-2xl font-bold text-green-600">100%</span><br />
+                Genuine Products
               </div>
-            ))}
+              <div className="text-gray-600">
+                <span className="text-2xl font-bold text-blue-600">Real-time</span><br />
+                Price Tracking
+              </div>
+              <div className="text-gray-600">
+                <span className="text-2xl font-bold text-amber-600">Best Deals</span><br />
+                Guaranteed
+              </div>
+            </div>
+
+            <p className="mt-16 text-sm text-gray-500">
+              © 2025 Dealzo • Made in India
+            </p>
           </div>
         </div>
-
-      </main>
-
-      <footer className="bg-white border-t border-gray-200 py-8 text-center text-gray-500 text-sm mt-auto">
-        <p>© 2024 Dealzo. All rights reserved.</p>
-      </footer>
-    </div>
+      </div>
+    </>
   );
 }
