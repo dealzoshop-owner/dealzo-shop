@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dealzo - Price Comparison & Affiliate App
 
-## Getting Started
+A production-ready Next.js 15 application for price comparison and affiliate monetization.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Price Comparison**: Compares prices from Amazon, Flipkart, Walmart, BestBuy (Mocked for demo).
+- **Affiliate System**: Automatically generates affiliate links and redirects.
+- **Product Extraction**: Extracts product titles from URLs.
+- **Search**: Smart search with fuzzy matching and caching.
+- **Premium UI**: Glassmorphism, dark mode, and responsive design.
+- **Performance**: Edge-ready API routes (Node.js runtime used for stability with Firebase), caching with Firestore.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js 15 App Router
+- TypeScript
+- Tailwind CSS + Shadcn UI
+- Firebase Firestore (Caching)
+- Cheerio (Scraping)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Environment Variables**:
+   Create a `.env.local` file with your Firebase config (optional for mock data, but required for caching):
+   ```env
+   NEXT_PUBLIC_FIREBASE_API_KEY=...
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
+   # ... other firebase config
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Run Locally**:
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Deploy**:
+   Push to GitHub and deploy on Vercel.
 
-## Deploy on Vercel
+## Folder Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/app`: Pages and API routes.
+- `src/components`: UI components.
+- `src/lib`: Utilities and business logic.
