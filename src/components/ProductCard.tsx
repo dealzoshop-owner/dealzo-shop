@@ -2,7 +2,7 @@ import { Product } from '@/lib/types';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Star, ExternalLink, ShoppingCart } from 'lucide-react';
+import { Star, ExternalLink, Heart, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import { STORES } from '@/lib/affiliates';
 import { formatCurrency } from '@/lib/utils';
@@ -15,45 +15,50 @@ export default function ProductCard({ product }: ProductCardProps) {
     const storeInfo = STORES[product.store] || STORES.Other;
 
     return (
-        <Card className="group relative overflow-hidden bg-black/40 border-white/10 hover:border-indigo-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10">
-            <div className="absolute top-3 left-3 z-10">
-                <Badge variant="secondary" className={`${storeInfo.color} text-white border-0 font-bold`}>
-                    {product.store}
-                </Badge>
-            </div>
+        <Card className="group relative overflow-hidden bg-white border border-gray-100 hover:shadow-xl transition-all duration-300 rounded-sm">
+            {/* Heart Icon */}
+            <button className="absolute top-3 right-3 z-20 text-gray-300 hover:text-red-500 transition-colors">
+                <Heart className="h-6 w-6 fill-current" />
+            </button>
+
+            {/* Discount Badge */}
             {product.discount && (
-                <div className="absolute top-3 right-3 z-10">
-                    <Badge variant="destructive" className="font-bold animate-pulse">
+                <div className="absolute top-3 left-3 z-10">
+                    <Badge className="bg-[#388e3c] text-white font-bold text-xs px-2 py-1">
                         {product.discount}
                     </Badge>
                 </div>
             )}
 
-            <div className="relative aspect-square overflow-hidden bg-white/5 p-6">
+            {/* Image Area */}
+            <div className="relative aspect-[4/5] overflow-hidden p-4 flex items-center justify-center">
                 <Image
                     src={product.image}
                     alt={product.title}
                     fill
-                    className="object-contain transition-transform duration-500 group-hover:scale-110"
+                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
             </div>
 
-            <CardContent className="p-5">
-                <h3 className="line-clamp-2 text-lg font-semibold text-white group-hover:text-indigo-400 transition-colors h-14">
+            <CardContent className="p-4">
+                {/* Title */}
+                <h3 className="line-clamp-2 text-sm font-medium text-gray-900 group-hover:text-[#2874F0] transition-colors h-10 mb-2">
                     {product.title}
                 </h3>
 
-                <div className="mt-2 flex items-center gap-2">
-                    <div className="flex items-center text-yellow-500">
-                        <Star className="h-4 w-4 fill-current" />
-                        <span className="ml-1 text-sm font-medium">{product.rating}</span>
+                {/* Rating & Reviews */}
+                <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center bg-[#388e3c] text-white px-1.5 py-0.5 rounded text-xs font-bold gap-1">
+                        {product.rating} <Star className="h-3 w-3 fill-current" />
                     </div>
-                    <span className="text-xs text-gray-500">({product.reviews} reviews)</span>
+                    <span className="text-xs text-gray-500 font-medium">({product.reviews.toLocaleString()})</span>
+                    <Image src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png" alt="Assured" width={60} height={15} className="ml-auto h-5 w-auto object-contain" />
                 </div>
 
-                <div className="mt-4 flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-white">
+                {/* Price */}
+                <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl font-bold text-black">
                         {formatCurrency(product.price, product.currency)}
                     </span>
                     {product.originalPrice && (
@@ -63,34 +68,34 @@ export default function ProductCard({ product }: ProductCardProps) {
                     )}
                 </div>
 
-                <p className="mt-2 text-xs text-green-400 font-medium flex items-center gap-1">
-                    <ShoppingCart className="h-3 w-3" />
-                    {product.delivery}
-                </p>
+                <p className="text-xs text-black font-medium">Free delivery</p>
+
+                {/* Trust Badge */}
+                <div className="mt-2 flex items-center gap-1 text-[10px] text-gray-500 border border-gray-200 rounded px-1 py-0.5 w-fit">
+                    <ShieldCheck className="h-3 w-3 text-[#2874F0]" />
+                    100% Genuine
+                </div>
             </CardContent>
 
-            <CardFooter className="p-5 pt-0 flex gap-2">
+            <CardFooter className="p-4 pt-0 flex flex-col gap-2">
                 <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 border-white/10 hover:bg-white/10 hover:text-white"
-                    onClick={() => {
-                        navigator.clipboard.writeText(window.location.origin + product.url);
-                        // In a real app, show a toast here
-                    }}
+                    asChild
+                    className="w-full bg-[#2874F0] hover:bg-[#1f5dc1] text-white font-bold h-10 rounded-sm shadow-sm"
                 >
-                    <ExternalLink className="h-4 w-4 rotate-45" />
+                    <a href={product.url} target="_blank" rel="noopener noreferrer">
+                        BUY NOW
+                    </a>
                 </Button>
                 <Button
                     asChild
-                    className="w-full bg-white text-black hover:bg-indigo-500 hover:text-white transition-all font-bold"
+                    variant="outline"
+                    className="w-full border-[#FF9900] text-[#FF9900] hover:bg-[#FFF5E5] font-bold h-10 rounded-sm"
                 >
                     <a href={product.url} target="_blank" rel="noopener noreferrer">
-                        Buy Now <ExternalLink className="ml-2 h-4 w-4" />
+                        Check on Amazon
                     </a>
                 </Button>
             </CardFooter>
         </Card>
     );
 }
-

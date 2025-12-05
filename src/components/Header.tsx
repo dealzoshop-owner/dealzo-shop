@@ -1,38 +1,60 @@
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { ShoppingBag, Search, Menu } from 'lucide-react';
+import { ShoppingCart, Search, User, Menu } from 'lucide-react';
 
 export default function Header() {
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl supports-[backdrop-filter]:bg-black/20">
-            <div className="container flex h-16 items-center justify-between px-4">
-                <div className="flex items-center gap-2">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 p-2">
-                            <ShoppingBag className="h-6 w-6 text-white" />
-                        </div>
-                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                            Dealzo
+        <header className="sticky top-0 z-50 w-full bg-[#2874F0] text-white shadow-md">
+            <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-4">
+                {/* Logo */}
+                <div className="flex items-center gap-2 shrink-0">
+                    <Link href="/" className="flex flex-col leading-none">
+                        <span className="text-xl font-bold italic tracking-wide">Dealzo</span>
+                        <span className="text-[10px] font-medium text-yellow-300 flex items-center gap-1">
+                            Explore <span className="text-yellow-300 font-bold">Plus</span>
+                            <span className="text-yellow-300">✦</span>
                         </span>
                     </Link>
                 </div>
 
-                <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-300">
-                    <Link href="/" className="hover:text-white transition-colors">Home</Link>
-                    <Link href="/deals" className="hover:text-white transition-colors">Top Deals</Link>
-                    <Link href="/categories" className="hover:text-white transition-colors">Categories</Link>
-                </nav>
+                {/* Search Bar (Desktop) */}
+                <div className="hidden md:flex flex-1 max-w-2xl mx-4">
+                    <div className="relative w-full">
+                        <input
+                            type="text"
+                            placeholder="Search for products, brands and more"
+                            className="w-full h-10 px-4 rounded-sm text-black focus:outline-none shadow-sm"
+                        />
+                        <Search className="absolute right-3 top-2.5 h-5 w-5 text-[#2874F0]" />
+                    </div>
+                </div>
 
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white hover:bg-white/10">
-                        <Search className="h-5 w-5" />
+                {/* Right Actions */}
+                <div className="flex items-center gap-6 font-medium">
+                    <Button className="bg-white text-[#2874F0] hover:bg-white/90 font-bold px-8 rounded-sm hidden md:flex">
+                        Login
                     </Button>
-                    <Button className="bg-white text-black hover:bg-gray-200 hidden md:flex">
-                        Sign In
-                    </Button>
-                    <Button variant="ghost" size="icon" className="md:hidden text-gray-300">
-                        <Menu className="h-5 w-5" />
-                    </Button>
+
+                    <Link href="/cart" className="flex items-center gap-1 hover:text-gray-100">
+                        <ShoppingCart className="h-5 w-5" />
+                        <span className="hidden md:inline">Cart</span>
+                    </Link>
+
+                    <Link href="/me" className="flex items-center gap-1 hover:text-gray-100 md:hidden">
+                        <User className="h-5 w-5" />
+                    </Link>
+                </div>
+            </div>
+
+            {/* Mobile Search Bar */}
+            <div className="md:hidden px-2 pb-2">
+                <div className="relative w-full">
+                    <input
+                        type="text"
+                        placeholder="Search for products..."
+                        className="w-full h-10 px-4 rounded-sm text-black focus:outline-none shadow-sm"
+                    />
+                    <Search className="absolute right-3 top-2.5 h-5 w-5 text-[#2874F0]" />
                 </div>
             </div>
         </header>

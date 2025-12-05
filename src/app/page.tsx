@@ -1,50 +1,60 @@
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
+import { ShieldCheck, CheckCircle, TrendingDown } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#f1f3f6] text-gray-900 font-sans">
       <Header />
 
-      <main className="relative flex flex-col items-center justify-center px-4 pt-20 pb-32 overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] -z-10" />
-        <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-600/10 rounded-full blur-[100px] -z-10" />
+      <main className="relative flex flex-col items-center justify-start pt-12 pb-32 px-4">
 
-        <div className="text-center max-w-4xl mx-auto space-y-8 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-sm text-indigo-300 mb-4 animate-fade-in">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-            </span>
-            AI-Powered Price Comparison
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-500 pb-2">
-            Find the best price <br />
-            <span className="text-indigo-500">in seconds.</span>
+        {/* Hero Section */}
+        <div className="w-full max-w-4xl mx-auto text-center space-y-8 mb-16">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900">
+            Compare Prices. <span className="text-[#2874F0]">Save Big.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-            Paste a product URL or search by name. We scan Amazon, Flipkart, Walmart, and more to find you the lowest price instantly.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Stop overpaying. We track prices across Amazon, Flipkart, and more to find you the lowest price instantly.
           </p>
 
-          <div className="pt-8">
+          <div className="pt-4">
             <SearchBar />
           </div>
 
-          <div className="pt-20 grid grid-cols-2 md:grid-cols-4 gap-8 text-center opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-            {/* Mock Logos */}
+          {/* Trust Signals */}
+          <div className="flex flex-wrap justify-center gap-6 pt-8 text-sm font-medium text-gray-600">
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
+              <ShieldCheck className="h-5 w-5 text-green-600" />
+              Safe & Secure
+            </div>
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
+              <CheckCircle className="h-5 w-5 text-[#2874F0]" />
+              100% Genuine Products
+            </div>
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
+              <TrendingDown className="h-5 w-5 text-[#FF9900]" />
+              Price Checked Today
+            </div>
+          </div>
+        </div>
+
+        {/* Categories / Stores */}
+        <div className="w-full max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Trusted By Millions</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {['Amazon', 'Flipkart', 'Walmart', 'BestBuy'].map(store => (
-              <div key={store} className="flex items-center justify-center font-bold text-xl text-white">
+              <div key={store} className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center font-bold text-xl text-gray-400 hover:text-gray-900 hover:shadow-md transition-all cursor-pointer">
                 {store}
               </div>
             ))}
           </div>
         </div>
+
       </main>
 
-      <footer className="border-t border-white/10 py-8 text-center text-gray-500 text-sm">
+      <footer className="bg-white border-t border-gray-200 py-8 text-center text-gray-500 text-sm mt-auto">
         <p>© 2024 Dealzo. All rights reserved.</p>
       </footer>
     </div>
