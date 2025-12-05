@@ -1,3 +1,5 @@
+"use client";
+
 import { Product } from '@/lib/types';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { Button } from './ui/button';
@@ -6,6 +8,10 @@ import { Star, ExternalLink, Heart, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import { STORES } from '@/lib/affiliates';
 import { formatCurrency } from '@/lib/utils';
+import { useAuth } from './AuthProvider';
+import { db } from '@/lib/firebase';
+import { doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import { useState, useEffect } from 'react';
 
 interface ProductCardProps {
     product: Product;
@@ -13,12 +19,45 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
     const storeInfo = STORES[product.store] || STORES.Other;
+    const { user, signInWithGoogle } = useAuth();
+    const [isSaved, setIsSaved] = useState(false);
+
+    useEffect(() => {
+        if (!user) return;
+        const checkSaved = async () => {
+            const docRef = doc(db, 'users', user.uid, 'saved', product.id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setIsSaved(true);
+            }
+        };
+        checkSaved();
+    }, [user, product.id]);
+
+    const toggleSave = async () => {
+        if (!user) {
+            signInWithGoogle();
+            return;
+        }
+
+        const docRef = doc(db, 'users', user.uid, 'saved', product.id);
+        if (isSaved) {
+            await deleteDoc(docRef);
+            setIsSaved(false);
+        } else {
+            await setDoc(docRef, product);
+            setIsSaved(true);
+        }
+    };
 
     return (
         <Card className="group relative overflow-hidden bg-white border border-gray-100 hover:shadow-xl transition-all duration-300 rounded-sm">
             {/* Heart Icon */}
-            <button className="absolute top-3 right-3 z-20 text-gray-300 hover:text-red-500 transition-colors">
-                <Heart className="h-6 w-6 fill-current" />
+            <button
+                onClick={toggleSave}
+                className={`absolute top-3 right-3 z-20 transition-colors ${isSaved ? 'text-red-500' : 'text-gray-300 hover:text-red-500'}`}
+            >
+                <Heart className={`h-6 w-6 ${isSaved ? 'fill-current' : ''}`} />
             </button>
 
             {/* Discount Badge */}

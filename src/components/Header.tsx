@@ -1,8 +1,15 @@
+"use client";
+
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { ShoppingCart, Search, User, Menu } from 'lucide-react';
+import { ShoppingCart, Search, User, LogOut } from 'lucide-react';
+import { useAuth } from './AuthProvider';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import Image from 'next/image';
 
 export default function Header() {
+    const { user, signInWithGoogle, logout } = useAuth();
+
     return (
         <header className="sticky top-0 z-50 w-full bg-[#2874F0] text-white shadow-md">
             <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-4">
@@ -31,18 +38,46 @@ export default function Header() {
 
                 {/* Right Actions */}
                 <div className="flex items-center gap-6 font-medium">
-                    <Button className="bg-white text-[#2874F0] hover:bg-white/90 font-bold px-8 rounded-sm hidden md:flex">
-                        Login
-                    </Button>
+                    {user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="flex items-center gap-2 hover:bg-transparent hover:text-gray-100">
+                                    {user.photoURL ? (
+                                        <Image src={user.photoURL} alt={user.displayName || "User"} width={32} height={32} className="rounded-full border border-white" />
+                                    ) : (
+                                        <User className="h-5 w-5" />
+                                    )}
+                                    <span className="hidden md:inline">{user.displayName?.split(' ')[0]}</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem asChild>
+                                    <Link href="/me" className="cursor-pointer">My Saved Products</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-600">
+                                    <LogOut className="mr-2 h-4 w-4" /> Logout
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <Button
+                            onClick={signInWithGoogle}
+                            className="bg-white text-[#2874F0] hover:bg-white/90 font-bold px-8 rounded-sm hidden md:flex"
+                        >
+                            Login
+                        </Button>
+                    )}
 
                     <Link href="/cart" className="flex items-center gap-1 hover:text-gray-100">
                         <ShoppingCart className="h-5 w-5" />
                         <span className="hidden md:inline">Cart</span>
                     </Link>
 
-                    <Link href="/me" className="flex items-center gap-1 hover:text-gray-100 md:hidden">
-                        <User className="h-5 w-5" />
-                    </Link>
+                    {!user && (
+                        <button onClick={signInWithGoogle} className="flex items-center gap-1 hover:text-gray-100 md:hidden">
+                            <User className="h-5 w-5" />
+                        </button>
+                    )}
                 </div>
             </div>
 
