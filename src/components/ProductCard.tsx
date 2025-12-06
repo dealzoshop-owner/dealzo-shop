@@ -1,24 +1,14 @@
-"use client";
-
-import { Product } from '@/lib/types';
-import { Card, CardContent, CardFooter } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Star, ExternalLink, Heart, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
-import { STORES } from '@/lib/affiliates';
-import { formatCurrency } from '@/lib/utils';
+import { convertToAffiliateLink } from '@/lib/affiliates';
+import { Heart } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { db } from '@/lib/firebase';
 import { doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
-import { useState, useEffect } from 'react';
 
-interface ProductCardProps {
-    product: Product;
-}
-
-export default function ProductCard({ product }: ProductCardProps) {
-    const storeInfo = STORES[product.store] || STORES.Other;
+export default function ProductCard({ product }: { product: any }) {
+    const isFlipkartAssured = product.title?.includes('Assured') ||
+        product.store?.toLowerCase().includes('flipkart');
     const { user, signInWithGoogle } = useAuth();
     const [isSaved, setIsSaved] = useState(false);
 
@@ -51,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     return (
-        <Card className="group relative overflow-hidden bg-white border border-gray-100 hover:shadow-xl transition-all duration-300 rounded-sm">
+        <div className="group relative border rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition bg-white">
             {/* Heart Icon */}
             <button
                 onClick={toggleSave}
@@ -60,80 +50,57 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <Heart className={`h-6 w-6 ${isSaved ? 'fill-current' : ''}`} />
             </button>
 
-            {/* Discount Badge */}
-            {product.discount && (
-                <div className="absolute top-3 left-3 z-10">
-                    <Badge className="bg-[#388e3c] text-white font-bold text-xs px-2 py-1">
-                        {product.discount}
-                    </Badge>
-                </div>
-            )}
-
-            {/* Image Area */}
-            <div className="relative aspect-[4/5] overflow-hidden p-4 flex items-center justify-center">
-                <img
-                    src={product.image || 'https://via.placeholder.com/400x400/f3f4f6/6b7280?text=Dealzo'}
+            {/* Real Image */}
+            <div className="relative h-64 bg-gray-50 p-4">
+                <Image
+                    src={product.thumbnail || product.image || 'https://via.placeholder.com/400'}
                     alt={product.title}
-                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/400x400/f3f4f6/6b7280?text=Dealzo' }}
+                    fill
+                    className="object-contain"
+                    unoptimized // important for external images
                 />
             </div>
 
-            <CardContent className="p-4">
-                {/* Title */}
-                <h3 className="line-clamp-2 text-sm font-medium text-gray-900 group-hover:text-[#2874F0] transition-colors h-10 mb-2">
-                    {product.title}
-                </h3>
-
-                {/* Rating & Reviews */}
+            {/* Store Name + Assured Badge */}
+            <div className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                    <div className="flex items-center bg-[#388e3c] text-white px-1.5 py-0.5 rounded text-xs font-bold gap-1">
-                        {product.rating} <Star className="h-3 w-3 fill-current" />
-                    </div>
-                    <span className="text-xs text-gray-500 font-medium">({product.reviews.toLocaleString()})</span>
-                    <Image src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png" alt="Assured" width={60} height={15} className="ml-auto h-5 w-auto object-contain" />
-                </div>
-
-                {/* Price */}
-                <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xl font-bold text-black">
-                        {formatCurrency(product.price, product.currency)}
+                    <span className="font-bold text-lg text-gray-800">
+                        {product.source || product.store || 'Unknown Store'}
                     </span>
-                    {product.originalPrice && (
-                        <span className="text-sm text-gray-500 line-through">
-                            {formatCurrency(product.originalPrice, product.currency)}
+                    {isFlipkartAssured && (
+                        <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                            Assured
                         </span>
                     )}
                 </div>
 
-                <p className="text-xs text-black font-medium">Free delivery</p>
+                {/* Title */}
+                <h3 className="text-sm line-clamp-2 text-gray-700 mb-3 font-medium">
+                    {product.title}
+                </h3>
 
-                {/* Trust Badge */}
-                <div className="mt-2 flex items-center gap-1 text-[10px] text-gray-500 border border-gray-200 rounded px-1 py-0.5 w-fit">
-                    <ShieldCheck className="h-3 w-3 text-[#2874F0]" />
-                    100% Genuine
+                {/* Price */}
+                <div className="flex items-end gap-3 mb-4">
+                    <span className="text-2xl font-bold text-green-600">
+                        ₹{product.price?.toLocaleString('en-IN') || product.extracted_price}
+                    </span>
+                    {product.originalPrice && (
+                        <span className="text-gray-500 line-through text-sm">
+                            ₹{product.originalPrice}
+                        </span>
+                    )}
                 </div>
-            </CardContent>
 
-            <CardFooter className="p-4 pt-0 flex flex-col gap-2">
-                <Button
-                    asChild
-                    className="w-full bg-[#2874F0] hover:bg-[#1f5dc1] text-white font-bold h-10 rounded-sm shadow-sm"
+                {/* Real Buy Button */}
+                <a
+                    href={convertToAffiliateLink(product.url || product.link)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition"
                 >
-                    <a href={product.url} target="_blank" rel="noopener noreferrer">
-                        BUY NOW
-                    </a>
-                </Button>
-                <Button
-                    asChild
-                    variant="outline"
-                    className="w-full border-[#FF9900] text-[#FF9900] hover:bg-[#FFF5E5] font-bold h-10 rounded-sm"
-                >
-                    <a href={product.url} target="_blank" rel="noopener noreferrer">
-                        Check on Amazon
-                    </a>
-                </Button>
-            </CardFooter>
-        </Card>
+                    BUY NOW →
+                </a>
+            </div>
+        </div>
     );
 }
