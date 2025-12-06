@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
             price: parseFloat((item.extracted_price || item.price || '0').toString().replace(/[^0-9.]/g, '')),
             originalPrice: item.old_price ? parseFloat(item.old_price.toString().replace(/[^0-9.]/g, '')) : null,
             image: item.thumbnail,
-            link: convertToAffiliateLink(item.link),
+            link: convertToAffiliateLink(item.link || item.product_link),
             rating: item.rating || 4.5,
             reviews: item.reviews || Math.floor(Math.random() * 1000) + 100,
             delivery: item.shipping || 'Free Delivery',
@@ -137,8 +137,8 @@ export async function POST(req: NextRequest) {
                 image: baseProduct.image,
                 minPrice: bestDeal.price,
                 maxPrice: maxPrice,
-                rating: baseProduct.rating,
-                reviews: baseProduct.reviews,
+                rating: bestDeal.rating,
+                reviews: bestDeal.reviews,
                 variants: groupVariants,
                 bestDeal: bestDeal,
                 cheapestStore: bestDeal.store,
@@ -153,7 +153,8 @@ export async function POST(req: NextRequest) {
             debug: {
                 rawCount: products.length,
                 filteredCount: filteredProducts.length,
-                firstProduct: products[0] ? { title: products[0].title, link: products[0].link, price: products[0].price } : null
+                firstProduct: products[0] ? { title: products[0].title, link: products[0].link, price: products[0].price } : null,
+                firstItemKeys: items.length > 0 ? Object.keys(items[0]) : []
             }
         });
 
