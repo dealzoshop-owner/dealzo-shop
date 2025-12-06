@@ -4,7 +4,7 @@ import { convertToAffiliateLink } from '@/lib/affiliates';
 import { Product, ProductGroup } from '@/lib/types';
 
 const SERPAPI_KEY = process.env.SERPAPI_KEY!;
-const SEARCH_TIMEOUT_MS = 15000;
+const SEARCH_TIMEOUT_MS = 10000;
 
 // Helper to normalize titles for grouping
 function normalizeTitle(title: string): string {

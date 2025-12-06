@@ -17,7 +17,7 @@ export default function ComparisonCard({ group }: { group: ProductGroup }) {
                 {/* Main Image */}
                 <div className="relative w-full sm:w-40 h-40 shrink-0 bg-gray-50 rounded-lg p-2">
                     <Image
-                        src={group.image}
+                        src={group.image || 'https://placehold.co/400x400?text=No+Image'}
                         alt={group.title}
                         fill
                         className="object-contain"
