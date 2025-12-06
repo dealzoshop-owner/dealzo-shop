@@ -113,13 +113,15 @@ export async function POST(req: NextRequest) {
 
         // Dedupe, sort by price
         results = Array.from(new Map(results.map(r => [r.link, r])).values())
-            .sort((a, b) => a.price - b.price)
-            .slice(0, 15);
+            .sort((a, b) => a.price - b.price);   // Cheapest first
 
     } catch (error) {
         console.error('API Error:', error);
         return NextResponse.json({ results: [], error: 'Try a more specific search' });
     }
 
-    return NextResponse.json({ results, total: results.length });
+    return NextResponse.json({
+        results,
+        total: results.length
+    });
 }
