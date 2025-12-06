@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { ProductGroup } from '@/lib/types';
 import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
+import { convertToAffiliateLink } from '@/lib/affiliates';
 
 export default function ComparisonCard({ group }: { group: ProductGroup }) {
     const [expanded, setExpanded] = useState(false);
@@ -62,7 +63,7 @@ export default function ComparisonCard({ group }: { group: ProductGroup }) {
                 {/* Action Column */}
                 <div className="flex flex-col gap-2 min-w-[140px] justify-center">
                     <a
-                        href={bestDeal.link}
+                        href={convertToAffiliateLink(bestDeal.link)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full bg-[#ff9f00] hover:bg-[#f39400] text-white font-bold py-3 rounded-lg text-center shadow-sm transition-colors"
@@ -96,7 +97,7 @@ export default function ComparisonCard({ group }: { group: ProductGroup }) {
                             <div className="flex items-center gap-4">
                                 <div className="font-bold text-gray-900">₹{variant.price.toLocaleString('en-IN')}</div>
                                 <a
-                                    href={variant.link}
+                                    href={convertToAffiliateLink(variant.link)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-[#2874F0] hover:bg-blue-50 p-2 rounded-full"

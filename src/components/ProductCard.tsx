@@ -1,6 +1,10 @@
 import Image from 'next/image';
+import { convertToAffiliateLink } from '@/lib/affiliates';
 
 export default function ProductCard({ product }: { product: any }) {
+    // Ensure the link is converted right before rendering
+    const buyLink = convertToAffiliateLink(product.link);
+
     return (
         <div className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full">
             {/* Image Container */}
@@ -62,7 +66,7 @@ export default function ProductCard({ product }: { product: any }) {
 
                 {/* Buy Button */}
                 <a
-                    href={product.link}
+                    href={buyLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full block text-center bg-[#ff9f00] hover:bg-[#f39400] text-white font-bold py-2.5 rounded-lg shadow-sm transition-colors text-sm"
