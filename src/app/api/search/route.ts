@@ -149,7 +149,12 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
             query: raw,
             groups: groups.slice(0, 20),
-            total: groups.length
+            total: groups.length,
+            debug: {
+                rawCount: products.length,
+                filteredCount: filteredProducts.length,
+                firstProduct: products[0] ? { title: products[0].title, link: products[0].link, price: products[0].price } : null
+            }
         });
 
     } catch (error) {
