@@ -4,8 +4,12 @@ import { convertToAffiliateLink } from '@/lib/affiliates';
 
 export default function ComparisonCard({ group }: { group: ProductGroup }) {
     const bestDeal = group.bestDeal;
-    // Sort variants by price to ensure the list is ordered
     const sortedVariants = [...group.variants].sort((a, b) => a.price - b.price);
+
+    const getRedirectLink = (url: string, store: string) => {
+        const affiliateUrl = convertToAffiliateLink(url);
+        return `/go?url=${encodeURIComponent(affiliateUrl)}&product=${encodeURIComponent(group.title)}&store=${encodeURIComponent(store)}`;
+    };
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -59,7 +63,7 @@ export default function ComparisonCard({ group }: { group: ProductGroup }) {
                 {/* Action Column */}
                 <div className="flex flex-col gap-2 min-w-[160px] justify-center">
                     <a
-                        href={convertToAffiliateLink(bestDeal.link)}
+                        href={getRedirectLink(bestDeal.link, bestDeal.store)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full bg-[#ff9f00] hover:bg-[#f39400] text-white font-bold py-3 rounded-lg text-center shadow-sm transition-colors"
@@ -72,7 +76,7 @@ export default function ComparisonCard({ group }: { group: ProductGroup }) {
                         {sortedVariants.map((variant, idx) => (
                             <a
                                 key={idx}
-                                href={convertToAffiliateLink(variant.link)}
+                                href={getRedirectLink(variant.link, variant.store)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-xs text-blue-600 hover:underline hover:text-blue-800 block truncate text-center py-0.5"
