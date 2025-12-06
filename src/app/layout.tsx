@@ -6,8 +6,9 @@ import { AuthProvider } from "@/components/AuthProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Dealzo - Best Price Comparison & Deals",
-  description: "Find the lowest prices on Amazon, Flipkart, Walmart, and more. Compare prices instantly and save money with Dealzo.",
+  metadataBase: new URL('https://dealzoshop.com'),
+  title: 'Dealzo – Best Price Comparison in India',
+  description: 'Compare prices from Amazon, Flipkart, Myntra, Ajio & 20+ stores instantly',
   openGraph: {
     title: "Dealzo - Best Price Comparison & Deals",
     description: "Compare prices across top stores instantly.",
