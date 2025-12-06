@@ -33,7 +33,13 @@ export function convertToAffiliateLink(rawUrl: string | null | undefined): strin
 
         // Catch-all for other stores (Myntra, Ajio, Croma, etc.) via EarnKaro
         // This ensures we try to monetize every link
-        return `https://ekaro.in/enkr20240618/${AFFILIATE_TAGS.earnkaro}?url=${encodeURIComponent(url)}`;
+        if (url.includes("myntra") || url.includes("ajio") || url.includes("croma") || url.includes("tatacliq") || url.includes("reliancedigital")) {
+            return `https://ekaro.in/enkr20240618/${AFFILIATE_TAGS.earnkaro}?url=${encodeURIComponent(url)}`;
+        }
+
+        // If it's a valid URL but not a specific partner store, return it as is (direct link)
+        // This prevents "0 results" by keeping the product even if we can't monetize it yet.
+        return url;
 
     } catch (e) {
         console.error("Affiliate link conversion error", e);
