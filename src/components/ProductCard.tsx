@@ -1,104 +1,51 @@
 import Image from 'next/image';
 import { convertToAffiliateLink } from '@/lib/affiliates';
-import { Heart } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useAuth } from './AuthProvider';
-import { db } from '@/lib/firebase';
-import { doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 
 export default function ProductCard({ product }: { product: any }) {
-    const isFlipkartAssured = product.title?.includes('Assured') ||
-        product.store?.toLowerCase().includes('flipkart');
-    const { user, signInWithGoogle } = useAuth();
-    const [isSaved, setIsSaved] = useState(false);
-
-    useEffect(() => {
-        if (!user) return;
-        const checkSaved = async () => {
-            const docRef = doc(db, 'users', user.uid, 'saved', product.id);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                setIsSaved(true);
-            }
-        };
-        checkSaved();
-    }, [user, product.id]);
-
-    const toggleSave = async () => {
-        if (!user) {
-            signInWithGoogle();
-            return;
-        }
-
-        const docRef = doc(db, 'users', user.uid, 'saved', product.id);
-        if (isSaved) {
-            await deleteDoc(docRef);
-            setIsSaved(false);
-        } else {
-            await setDoc(docRef, product);
-            setIsSaved(true);
-        }
-    };
+    const buyLink = product.store?.toLowerCase().includes('amazon')
+        ? convertToAffiliateLink(product.link)  // Your commission
+        : product.link;  // Direct link
 
     return (
-        <div className="group relative border rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition bg-white">
-            {/* Heart Icon */}
-            <button
-                onClick={toggleSave}
-                className={`absolute top-3 right-3 z-20 transition-colors ${isSaved ? 'text-red-500' : 'text-gray-300 hover:text-red-500'}`}
-            >
-                <Heart className={`h-6 w-6 ${isSaved ? 'fill-current' : ''}`} />
-            </button>
-
-            {/* Real Image */}
-            <div className="relative h-64 bg-gray-50 p-4">
+        <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition overflow-hidden">
+            <div className="h-48 bg-gray-100 relative">
                 <Image
-                    src={product.thumbnail || product.image || 'https://via.placeholder.com/400'}
+                    src={product.image || '/fallback.jpg'}
                     alt={product.title}
                     fill
-                    className="object-contain"
-                    unoptimized // important for external images
+                    className="object-contain p-4"
+                    unoptimized
                 />
             </div>
 
-            {/* Store Name + Assured Badge */}
             <div className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="font-bold text-lg text-gray-800">
-                        {product.source || product.store || 'Unknown Store'}
-                    </span>
-                    {isFlipkartAssured && (
-                        <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                            Assured
-                        </span>
+                    <span className="text-sm font-semibold text-blue-600">{product.store}</span>
+                    {product.isFlipkartAssured && (
+                        <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">Assured</span>
                     )}
                 </div>
 
-                {/* Title */}
-                <h3 className="text-sm line-clamp-2 text-gray-700 mb-3 font-medium">
-                    {product.title}
-                </h3>
+                <h3 className="text-sm font-medium line-clamp-2 mb-2">{product.title}</h3>
 
-                {/* Price */}
-                <div className="flex items-end gap-3 mb-4">
+                <div className="flex items-baseline gap-2 mb-3">
                     <span className="text-2xl font-bold text-green-600">
-                        ₹{product.price?.toLocaleString('en-IN') || product.extracted_price}
+                        ₹{product.price?.toLocaleString('en-IN')}
                     </span>
-                    {product.originalPrice && (
-                        <span className="text-gray-500 line-through text-sm">
-                            ₹{product.originalPrice}
+                    {product.originalPrice && product.originalPrice > product.price && (
+                        <span className="text-sm text-gray-500 line-through">
+                            ₹{product.originalPrice.toLocaleString('en-IN')}
                         </span>
                     )}
                 </div>
 
-                {/* Real Buy Button */}
                 <a
-                    href={product.store?.includes('Amazon') ? convertToAffiliateLink(product.link) : product.link}
+                    href={buyLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition"
                 >
-                    BUY NOW →
+                    BUY NOW
                 </a>
             </div>
         </div>
