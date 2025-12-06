@@ -53,19 +53,21 @@ export async function POST(req: NextRequest) {
 
         const allStoreResults = results.map((item: any) => ({
             id: item.product_id || `serp-${Math.random().toString(36).substr(2, 9)}`,
-            store: item.source || 'Unknown',
+            store: item.source || 'Unknown Store',
             title: item.title,
-            price: parseFloat(item.extracted_price?.toString().replace(/[^0-9.]/g, '') || 0),
-            originalPrice: parseFloat(item.price?.toString().replace(/[^0-9.]/g, '') || 0),
+            price: parseFloat((item.extracted_price?.toString() || item.price?.toString() || '0').replace(/[^0-9.]/g, '')),
+            originalPrice: item.price ? parseFloat(item.price.toString().replace(/[^0-9.]/g, '')) : null,
             discount: item.extracted_price_incentive || '',
             rating: item.rating || 0,
             reviews: item.reviews || 0,
             delivery: item.shipping || 'Check store',
             image: item.thumbnail,
-            url: convertToAffiliateLink(item.link),
+            link: item.link, // REAL PURCHASE URL
             inStock: true,
-            currency: 'INR' // Assuming INR since gl='in'
-        })).filter((r: any) => r.price > 0).sort((a: any, b: any) => a.price - b.price);
+            currency: 'INR',
+            isFlipkartAssured: item.source?.toLowerCase().includes('flipkart'),
+        })).filter((p: any) => p.price > 0 && p.link) // Only keep items with real link
+            .sort((a: any, b: any) => a.price - b.price);
 
         const finalResults = allStoreResults.slice(0, 12);
 

@@ -93,7 +93,7 @@ export default function ProductCard({ product }: { product: any }) {
 
                 {/* Real Buy Button */}
                 <a
-                    href={convertToAffiliateLink(product.url || product.link)}
+                    href={product.store?.includes('Amazon') ? convertToAffiliateLink(product.link) : product.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition"
