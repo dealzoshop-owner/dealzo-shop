@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, ShoppingBag, TrendingUp, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
 import Header from '@/components/Header';
+import ComparisonCard from '@/components/ComparisonCard';
 
 export default function HomePage() {
     const [query, setQuery] = useState('');
@@ -75,8 +76,73 @@ export default function HomePage() {
                 </div>
             </main>
 
+            {/* Featured Live Deals Section */}
+            <section className="py-12 bg-white">
+                <div className="container mx-auto px-4 max-w-5xl">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                            <Zap className="h-6 w-6 text-orange-500" /> Featured Live Deals
+                        </h2>
+                        <button
+                            onClick={() => router.push('/search?q=iphone')}
+                            className="text-[#2874F0] font-medium hover:underline flex items-center gap-1"
+                        >
+                            View all deals <ArrowRight className="h-4 w-4" />
+                        </button>
+                    </div>
+
+                    <div className="grid gap-6">
+                        {/* Mock Deal 1: iPhone 15 */}
+                        <ComparisonCard group={{
+                            id: 'home-1',
+                            title: 'Apple iPhone 15 (128 GB) - Black',
+                            image: 'https://m.media-amazon.com/images/I/71657TiFeHL._SX679_.jpg',
+                            minPrice: 71290,
+                            maxPrice: 79900,
+                            rating: 4.6,
+                            reviews: 12500,
+                            variants: [
+                                { id: 'v1', store: 'Amazon', price: 71290, title: 'iPhone 15', link: 'https://www.amazon.in/dp/B0CHX2F5QT', image: '', rating: 4.6, reviews: 0, delivery: 'Free', isFlipkartAssured: false, inStock: true },
+                                { id: 'v2', store: 'Flipkart', price: 72999, title: 'iPhone 15', link: 'https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm6ac648551528c', image: '', rating: 4.6, reviews: 0, delivery: 'Free', isFlipkartAssured: true, inStock: true },
+                                { id: 'v3', store: 'Croma', price: 79900, title: 'iPhone 15', link: 'https://www.croma.com/apple-iphone-15-128gb-black/p/300652', image: '', rating: 4.6, reviews: 0, delivery: 'Free', isFlipkartAssured: false, inStock: true }
+                            ],
+                            bestDeal: { id: 'v1', store: 'Amazon', price: 71290, title: 'iPhone 15', link: 'https://www.amazon.in/dp/B0CHX2F5QT', image: '', rating: 4.6, reviews: 0, delivery: 'Free', isFlipkartAssured: false, inStock: true },
+                            cheapestStore: 'Amazon',
+                            priceGap: 8610
+                        }} />
+
+                        {/* Mock Deal 2: Samsung S24 */}
+                        <ComparisonCard group={{
+                            id: 'home-2',
+                            title: 'Samsung Galaxy S24 Ultra 5G AI Smartphone (Titanium Gray, 12GB, 256GB Storage)',
+                            image: 'https://m.media-amazon.com/images/I/81vxWpPpgNL._SX679_.jpg',
+                            minPrice: 129999,
+                            maxPrice: 134999,
+                            rating: 4.5,
+                            reviews: 850,
+                            variants: [
+                                { id: 'v4', store: 'Amazon', price: 129999, title: 'Samsung S24 Ultra', link: 'https://www.amazon.in/dp/B0CS5Y7R92', image: '', rating: 4.5, reviews: 0, delivery: 'Free', isFlipkartAssured: false, inStock: true },
+                                { id: 'v5', store: 'Samsung Shop', price: 134999, title: 'Samsung S24 Ultra', link: 'https://www.samsung.com/in/smartphones/galaxy-s24-ultra/', image: '', rating: 4.5, reviews: 0, delivery: 'Free', isFlipkartAssured: false, inStock: true }
+                            ],
+                            bestDeal: { id: 'v4', store: 'Amazon', price: 129999, title: 'Samsung S24 Ultra', link: 'https://www.amazon.in/dp/B0CS5Y7R92', image: '', rating: 4.5, reviews: 0, delivery: 'Free', isFlipkartAssured: false, inStock: true },
+                            cheapestStore: 'Amazon',
+                            priceGap: 5000
+                        }} />
+                    </div>
+
+                    <div className="mt-8 text-center">
+                        <button
+                            onClick={() => router.push('/search?q=laptop')}
+                            className="bg-[#2874F0] text-white px-8 py-3 rounded-full font-bold hover:bg-[#1e5bbf] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                        >
+                            Try Search Now
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             {/* Value Props Section */}
-            <section className="py-16 bg-white border-t border-gray-100">
+            <section className="py-16 bg-gray-50 border-t border-gray-100">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                         <div className="p-6 rounded-2xl bg-blue-50/50 border border-blue-100 hover:shadow-lg transition-shadow">
