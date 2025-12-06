@@ -1,93 +1,75 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import { convertToAffiliateLink } from '@/lib/affiliates';
-import { db } from '@/lib/firebase';
-import { collection, addDoc, query as firestoreQuery, where, getDocs, Timestamp } from 'firebase/firestore';
 
 const SERPAPI_KEY = process.env.SERPAPI_KEY!;
 
-// Using nodejs runtime to ensure full Firebase compatibility and stability
-export const runtime = 'nodejs';
-export const revalidate = 3600;
-
 export async function POST(req: NextRequest) {
+    const { input } = await req.json();
+    if (!input || input.trim() === '') {
+        return NextResponse.json({ results: [] });
+    }
+
+    const query = input.trim();
+
     try {
-        const { query: input, url } = await req.json(); // Handling both query and url from frontend
-        const searchQuery = input || url;
-
-        if (!searchQuery) {
-            return NextResponse.json({ error: 'Query is required' }, { status: 400 });
-        }
-
-        // Check Cache in Firestore
-        const cacheRef = collection(db, 'searches');
-        const q = firestoreQuery(cacheRef, where('query', '==', searchQuery));
-
-        try {
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                const doc = querySnapshot.docs[0].data();
-                const now = Timestamp.now();
-                // Check if less than 24 hours old
-                if (now.seconds - doc.timestamp.seconds < 86400) {
-                    return NextResponse.json({ products: doc.products, cached: true });
-                }
-            }
-        } catch (e) {
-            console.warn('Cache lookup failed, proceeding to fresh search', e);
-        }
-
-        // Real API call using SERPAPI
-        const response = await axios.get('https://serpapi.com/search', {
+        const response = await axios.get('https://serpapi.com/search.json', {
             params: {
                 engine: 'google_shopping',
-                q: searchQuery,
-                gl: 'in',           // India
+                q: query,
+                gl: 'in',
                 hl: 'en',
+                num: 30,                    // ← More results
+                tbs: 'mr:1',                // ← Include all merchants
                 api_key: SERPAPI_KEY,
-                num: 20,
             },
+            timeout: 10000,
         });
 
-        const results = response.data.shopping_results || [];
+        const items = response.data.shopping_results || response.data.organic_results || [];
 
-        const allStoreResults = results.map((item: any) => ({
-            id: item.product_id || `serp-${Math.random().toString(36).substr(2, 9)}`,
-            store: item.source || 'Unknown Store',
-            title: item.title,
-            price: parseFloat((item.extracted_price?.toString() || item.price?.toString() || '0').replace(/[^0-9.]/g, '')),
-            originalPrice: item.price ? parseFloat(item.price.toString().replace(/[^0-9.]/g, '')) : null,
-            discount: item.extracted_price_incentive || '',
-            rating: item.rating || 0,
-            reviews: item.reviews || 0,
-            delivery: item.shipping || 'Check store',
-            image: item.thumbnail,
-            link: item.link, // REAL PURCHASE URL
-            inStock: true,
-            currency: 'INR',
-            isFlipkartAssured: item.source?.toLowerCase().includes('flipkart'),
-        })).filter((p: any) => p.price > 0 && p.link) // Only keep items with real link
-            .sort((a: any, b: any) => a.price - b.price);
-
-        const finalResults = allStoreResults.slice(0, 12);
-
-        // Cache results (fire and forget)
-        try {
-            if (finalResults.length > 0) {
-                addDoc(cacheRef, {
-                    query: searchQuery,
-                    products: finalResults,
-                    timestamp: Timestamp.now()
-                });
-            }
-        } catch (e) {
-            console.warn('Failed to cache results', e);
+        if (items.length === 0) {
+            // Fallback: try direct Google search
+            const fallback = await axios.get('https://serpapi.com/search.json', {
+                params: {
+                    engine: 'google',
+                    q: query + ' buy online india',
+                    gl: 'in',
+                    api_key: SERPAPI_KEY,
+                },
+            });
+            // Extract shopping links from fallback if needed
         }
 
-        return NextResponse.json({ products: finalResults, cached: false });
+        const results = items
+            .map((item: any) => ({
+                store: item.source || item.seller || 'Unknown',
+                title: item.title || 'No title',
+                price: parseFloat((item.extracted_price?.toString() || item.price?.toString() || '0').replace(/[^0-9.]/g, '')),
+                originalPrice: item.price ? parseFloat(item.price.toString().replace(/[^0-9.]/g, '')) : null,
+                image: item.thumbnail || '',
+                link: item.link || '#',
+                rating: item.rating || 0,
+                reviews: item.reviews || 0,
+                delivery: item.shipping || item.delivery || 'Check store',
+                isFlipkartAssured: (item.source || '').toLowerCase().includes('flipkart'),
+            }))
+            .filter((p: any) => p.price > 0 && p.link !== '#')
+            .sort((a: any, b: any) => a.price - b.price)
+            .slice(0, 15);
+
+        return NextResponse.json({
+            results,
+            total: results.length,
+            query
+        });
 
     } catch (error) {
-        console.error('API Error:', error);
-        return NextResponse.json({ error: 'Try again' }, { status: 500 });
+        console.error('SerpApi error:', error);
+        return NextResponse.json({
+            results: [],
+            error: 'No results found – try different spelling',
+            query
+        });
     }
 }
