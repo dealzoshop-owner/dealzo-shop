@@ -6,9 +6,20 @@ import { ShoppingCart, Search, User, LogOut } from 'lucide-react';
 import { useAuth } from './AuthProvider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import Image from 'next/image';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
     const { user, signInWithGoogle, logout } = useAuth();
+    const [query, setQuery] = useState('');
+    const router = useRouter();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (query.trim()) {
+            router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+        }
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full bg-[#2874F0] text-white shadow-md">
@@ -26,14 +37,18 @@ export default function Header() {
 
                 {/* Search Bar (Desktop) */}
                 <div className="hidden md:flex flex-1 max-w-2xl mx-4">
-                    <div className="relative w-full">
+                    <form onSubmit={handleSearch} className="relative w-full">
                         <input
                             type="text"
                             placeholder="Search for products, brands and more"
                             className="w-full h-10 px-4 rounded-sm text-black focus:outline-none shadow-sm"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
                         />
-                        <Search className="absolute right-3 top-2.5 h-5 w-5 text-[#2874F0]" />
-                    </div>
+                        <button type="submit" className="absolute right-3 top-2.5">
+                            <Search className="h-5 w-5 text-[#2874F0]" />
+                        </button>
+                    </form>
                 </div>
 
                 {/* Right Actions */}
@@ -83,14 +98,18 @@ export default function Header() {
 
             {/* Mobile Search Bar */}
             <div className="md:hidden px-2 pb-2">
-                <div className="relative w-full">
+                <form onSubmit={handleSearch} className="relative w-full">
                     <input
                         type="text"
                         placeholder="Search for products..."
                         className="w-full h-10 px-4 rounded-sm text-black focus:outline-none shadow-sm"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
                     />
-                    <Search className="absolute right-3 top-2.5 h-5 w-5 text-[#2874F0]" />
-                </div>
+                    <button type="submit" className="absolute right-3 top-2.5">
+                        <Search className="h-5 w-5 text-[#2874F0]" />
+                    </button>
+                </form>
             </div>
         </header>
     );
