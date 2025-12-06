@@ -71,12 +71,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             {/* Image Area */}
             <div className="relative aspect-[4/5] overflow-hidden p-4 flex items-center justify-center">
-                <Image
-                    src={product.image}
+                <img
+                    src={product.image || 'https://via.placeholder.com/400x400/f3f4f6/6b7280?text=Dealzo'}
                     alt={product.title}
-                    fill
-                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/400x400/f3f4f6/6b7280?text=Dealzo' }}
                 />
             </div>
 

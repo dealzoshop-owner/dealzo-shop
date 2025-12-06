@@ -43,7 +43,7 @@ const generateMockProduct = (store: Product['store'], query: string, index: numb
         rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
         reviews: Math.floor(Math.random() * 5000),
         delivery: Math.random() > 0.5 ? 'Free Delivery' : '+$5.99 Shipping',
-        image: `https://source.unsplash.com/400x400/?${encodeURIComponent(query)},product,${index}`, // Fallback or placeholder
+        image: `https://via.placeholder.com/400x400/f3f4f6/6b7280?text=${encodeURIComponent(query)}`, // Fallback or placeholder
         url: `/api/affiliate?store=${store}&id=mock-${index}`, // Internal redirect
         inStock: Math.random() > 0.1,
         currency: 'USD'
