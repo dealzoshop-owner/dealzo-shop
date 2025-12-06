@@ -90,15 +90,11 @@ export async function POST(req: NextRequest) {
             inStock: true,
         }));
 
-        console.log(`[API] Found ${products.length} raw items from SerpApi`);
-
         const filteredProducts = products.filter((p: Product) => {
             // Relaxed filter: just check for price and existence of link
             const isValid = p.price > 0 && p.link && p.link.length > 0;
             return isValid;
         });
-
-        console.log(`[API] ${filteredProducts.length} products remained after filtering`);
 
         // 2. Group Products
         const groups: ProductGroup[] = [];
@@ -149,13 +145,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
             query: raw,
             groups: groups.slice(0, 20),
-            total: groups.length,
-            debug: {
-                rawCount: products.length,
-                filteredCount: filteredProducts.length,
-                firstProduct: products[0] ? { title: products[0].title, link: products[0].link, price: products[0].price } : null,
-                firstItemKeys: items.length > 0 ? Object.keys(items[0]) : []
-            }
+            total: groups.length
         });
 
     } catch (error) {
