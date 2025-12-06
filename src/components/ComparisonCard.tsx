@@ -1,13 +1,11 @@
 import Image from 'next/image';
 import { ProductGroup } from '@/lib/types';
-import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
 import { convertToAffiliateLink } from '@/lib/affiliates';
 
 export default function ComparisonCard({ group }: { group: ProductGroup }) {
-    const [expanded, setExpanded] = useState(false);
     const bestDeal = group.bestDeal;
-    const otherDeals = group.variants.slice(1);
+    // Sort variants by price to ensure the list is ordered
+    const sortedVariants = [...group.variants].sort((a, b) => a.price - b.price);
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -37,11 +35,9 @@ export default function ComparisonCard({ group }: { group: ProductGroup }) {
                             <span className="text-xs text-gray-500">({group.reviews} reviews)</span>
                         </div>
 
-                        {group.variants.length > 1 && (
-                            <div className="text-sm text-gray-500 mb-2">
-                                Available at <span className="font-bold text-gray-700">{group.variants.length} stores</span> including {group.variants.map(v => v.store).slice(0, 3).join(', ')}
-                            </div>
-                        )}
+                        <div className="text-sm text-gray-500 mb-2">
+                            Available at <span className="font-bold text-gray-700">{group.variants.length} stores</span>
+                        </div>
                     </div>
 
                     {/* Best Price Section */}
@@ -61,7 +57,7 @@ export default function ComparisonCard({ group }: { group: ProductGroup }) {
                 </div>
 
                 {/* Action Column */}
-                <div className="flex flex-col gap-2 min-w-[140px] justify-center">
+                <div className="flex flex-col gap-2 min-w-[160px] justify-center">
                     <a
                         href={convertToAffiliateLink(bestDeal.link)}
                         target="_blank"
@@ -70,45 +66,23 @@ export default function ComparisonCard({ group }: { group: ProductGroup }) {
                     >
                         BUY NOW
                     </a>
-                    {otherDeals.length > 0 && (
-                        <button
-                            onClick={() => setExpanded(!expanded)}
-                            className="text-sm text-[#2874F0] font-medium flex items-center justify-center gap-1 hover:bg-blue-50 py-2 rounded-lg transition-colors"
-                        >
-                            {expanded ? 'Hide prices' : `Compare ${otherDeals.length} more`}
-                            {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                        </button>
-                    )}
+
+                    {/* List all stores with affiliate links */}
+                    <div className="flex flex-col gap-1.5 mt-2 border-t pt-2 border-gray-100">
+                        {sortedVariants.map((variant, idx) => (
+                            <a
+                                key={idx}
+                                href={convertToAffiliateLink(variant.link)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-600 hover:underline hover:text-blue-800 block truncate text-center py-0.5"
+                            >
+                                Buy from {variant.store}
+                            </a>
+                        ))}
+                    </div>
                 </div>
             </div>
-
-            {/* Expanded Comparison Table */}
-            {expanded && otherDeals.length > 0 && (
-                <div className="border-t border-gray-100 bg-gray-50 p-4 space-y-3">
-                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Other Stores</h4>
-                    {otherDeals.map((variant, idx) => (
-                        <div key={idx} className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                            <div className="flex items-center gap-3">
-                                <div className="font-medium text-gray-700 w-24">{variant.store}</div>
-                                {variant.isFlipkartAssured && (
-                                    <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png" alt="Assured" className="h-4 object-contain" />
-                                )}
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <div className="font-bold text-gray-900">₹{variant.price.toLocaleString('en-IN')}</div>
-                                <a
-                                    href={convertToAffiliateLink(variant.link)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[#2874F0] hover:bg-blue-50 p-2 rounded-full"
-                                >
-                                    <ExternalLink className="h-4 w-4" />
-                                </a>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
         </div>
     );
 }
