@@ -6,7 +6,7 @@ export const AFFILIATE_TAGS = {
 };
 
 export function convertToAffiliateLink(rawUrl: string | null | undefined): string {
-    if (!rawUrl || typeof rawUrl !== "string") return '#';
+    if (!rawUrl || typeof rawUrl !== "string") return '';
 
     const url = rawUrl.trim();
 

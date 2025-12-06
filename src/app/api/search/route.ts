@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
             isFlipkartAssured: (item.source || '').toLowerCase().includes('flipkart'),
             inStock: true,
         }))
-            .filter((p: Product) => p.price > 100 && p.link && !p.link.includes('google.com/url'));
+            .filter((p: Product) => p.price > 100 && p.link && p.link.startsWith('http') && !p.link.includes('google.com/url'));
 
         // 2. Group Products
         const groups: ProductGroup[] = [];
