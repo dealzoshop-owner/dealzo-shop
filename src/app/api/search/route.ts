@@ -4,6 +4,7 @@ import { convertToAffiliateLink } from '@/lib/affiliates';
 import { Product, ProductGroup } from '@/lib/types';
 
 const SERPAPI_KEY = process.env.SERPAPI_KEY!;
+const SEARCH_TIMEOUT_MS = 15000;
 
 // Helper to normalize titles for grouping
 function normalizeTitle(title: string): string {
@@ -24,31 +25,54 @@ function getSimilarity(s1: string, s2: string): number {
     return intersection.size / union.size;
 }
 
-export async function POST(req: NextRequest) {
-    const { input } = await req.json();
-    if (!input?.trim()) return NextResponse.json({ groups: [], total: 0 });
-
-    const raw = input.trim();
-
-    // Smart Query Logic
-    const isGeneric = raw.length <= 5 || ['iphone', 'samsung', 'apple', 'sony', 'nike', 'puma', 'adidas', 'boat'].includes(raw.toLowerCase());
-    const query = isGeneric ? `${raw} price india` : raw;
-
+async function fetchWithTimeout(url: string, options: any = {}) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), SEARCH_TIMEOUT_MS);
     try {
-        const response = await axios.get('https://serpapi.com/search.json', {
-            params: {
-                engine: 'google_shopping',
-                q: query,
-                gl: 'in',
-                hl: 'en',
-                num: 60, // Fetch more for better grouping
-                tbs: 'mr:1,merchagg:g784994|g8299768|g127034',
-                api_key: SERPAPI_KEY,
-            },
-            timeout: 20000,
-        });
+        const response = await axios.get(url, { ...options, signal: controller.signal });
+        clearTimeout(id);
+        return response;
+    } catch (error) {
+        clearTimeout(id);
+        throw error;
+    }
+}
 
-        const items = response.data.shopping_results || [];
+export async function POST(req: NextRequest) {
+    try {
+        const { input } = await req.json();
+        if (!input?.trim()) return NextResponse.json({ groups: [], total: 0 });
+
+        const raw = input.trim();
+
+        // Smart Query Logic
+        const isGeneric = raw.length <= 5 || ['iphone', 'samsung', 'apple', 'sony', 'nike', 'puma', 'adidas', 'boat'].includes(raw.toLowerCase());
+        const query = isGeneric ? `${raw} price india` : raw;
+
+        if (!SERPAPI_KEY) {
+            console.error("Missing SERPAPI_KEY");
+            return NextResponse.json({ groups: [], total: 0, error: 'Server configuration error' }, { status: 500 });
+        }
+
+        let items: any[] = [];
+        try {
+            const response = await fetchWithTimeout('https://serpapi.com/search.json', {
+                params: {
+                    engine: 'google_shopping',
+                    q: query,
+                    gl: 'in',
+                    hl: 'en',
+                    num: 60,
+                    tbs: 'mr:1,merchagg:g784994|g8299768|g127034',
+                    api_key: SERPAPI_KEY,
+                },
+            });
+            items = response.data.shopping_results || [];
+        } catch (error) {
+            console.error('SerpApi failed:', error);
+            // Return empty results gracefully instead of crashing
+            return NextResponse.json({ groups: [], total: 0, error: 'Search provider unavailable' });
+        }
 
         // 1. Normalize & Map Products
         const products: Product[] = items.map((item: any) => ({
@@ -100,7 +124,7 @@ export async function POST(req: NextRequest) {
 
             groups.push({
                 id: `group-${i}`,
-                title: baseProduct.title, // Use the title of the first/best match
+                title: baseProduct.title,
                 image: baseProduct.image,
                 minPrice: bestDeal.price,
                 maxPrice: maxPrice,
@@ -113,10 +137,6 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // Sort groups by relevance (or price)
-        // For now, keep SerpApi's relevance order but filter out single-item groups if we want strict comparison? 
-        // No, show all.
-
         return NextResponse.json({
             query: raw,
             groups: groups.slice(0, 20),
@@ -124,7 +144,7 @@ export async function POST(req: NextRequest) {
         });
 
     } catch (error) {
-        console.error('Search API Error:', error);
-        return NextResponse.json({ groups: [], total: 0, error: 'Failed to fetch results' });
+        console.error('SEARCH ROUTE FATAL ERROR:', error);
+        return NextResponse.json({ groups: [], total: 0, error: 'Internal server error' }, { status: 500 });
     }
 }

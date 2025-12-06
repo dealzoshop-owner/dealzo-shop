@@ -5,8 +5,13 @@ export const AFFILIATE_TAGS = {
     default: "dealzo21-21"
 };
 
-export function convertToAffiliateLink(url: string): string {
-    if (!url) return '#';
+export function convertToAffiliateLink(rawUrl: string | null | undefined): string {
+    if (!rawUrl || typeof rawUrl !== "string") return '#';
+
+    const url = rawUrl.trim();
+
+    // Guard: must be http(s)
+    if (!url.startsWith("http")) return url;
 
     try {
         // Amazon
