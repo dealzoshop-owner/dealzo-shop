@@ -1,49 +1,71 @@
 import Image from 'next/image';
-import { convertToAffiliateLink } from '@/lib/affiliates';
 
 export default function ProductCard({ product }: { product: any }) {
-    const buyLink = product.store?.toLowerCase().includes('amazon')
-        ? convertToAffiliateLink(product.link)  // Your commission
-        : product.link;  // Direct link
-
     return (
-        <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition overflow-hidden">
-            <div className="h-48 bg-gray-100 relative">
+        <div className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+            {/* Image Container */}
+            <div className="relative h-52 p-6 bg-white flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                 <Image
-                    src={product.image || '/fallback.jpg'}
+                    src={product.image || 'https://via.placeholder.com/300?text=No+Image'}
                     alt={product.title}
                     fill
-                    className="object-contain p-4"
+                    className="object-contain"
                     unoptimized
                 />
             </div>
 
-            <div className="p-4">
+            {/* Content */}
+            <div className="p-4 flex flex-col flex-grow">
+                {/* Store Badge */}
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm font-semibold text-blue-600">{product.store}</span>
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                        {product.store}
+                    </span>
                     {product.isFlipkartAssured && (
-                        <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">Assured</span>
+                        <img
+                            src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png"
+                            alt="Assured"
+                            className="h-4 object-contain"
+                        />
                     )}
                 </div>
 
-                <h3 className="text-sm font-medium line-clamp-2 mb-2">{product.title}</h3>
+                {/* Title */}
+                <h3 className="text-sm font-medium text-gray-800 line-clamp-2 mb-2 flex-grow" title={product.title}>
+                    {product.title}
+                </h3>
 
-                <div className="flex items-baseline gap-2 mb-3">
-                    <span className="text-2xl font-bold text-green-600">
-                        ₹{product.price?.toLocaleString('en-IN')}
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-3">
+                    <div className="bg-green-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                        {product.rating} ★
+                    </div>
+                    <span className="text-xs text-gray-400">({product.reviews})</span>
+                </div>
+
+                {/* Price Section */}
+                <div className="flex items-end gap-2 mb-4">
+                    <span className="text-xl font-bold text-gray-900">
+                        ₹{product.price.toLocaleString('en-IN')}
                     </span>
                     {product.originalPrice && product.originalPrice > product.price && (
-                        <span className="text-sm text-gray-500 line-through">
+                        <span className="text-xs text-gray-400 line-through mb-1">
                             ₹{product.originalPrice.toLocaleString('en-IN')}
+                        </span>
+                    )}
+                    {product.originalPrice && product.originalPrice > product.price && (
+                        <span className="text-xs font-bold text-green-600 mb-1">
+                            {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% off
                         </span>
                     )}
                 </div>
 
+                {/* Buy Button */}
                 <a
-                    href={buyLink}
+                    href={product.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition"
+                    className="w-full block text-center bg-[#ff9f00] hover:bg-[#f39400] text-white font-bold py-2.5 rounded-lg shadow-sm transition-colors text-sm"
                 >
                     BUY NOW
                 </a>

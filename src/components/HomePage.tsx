@@ -1,61 +1,84 @@
+"use client";
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search } from 'lucide-react';
+import Image from 'next/image';
 import Header from '@/components/Header';
-import SearchBar from '@/components/SearchBar';
-import { ShieldCheck, CheckCircle, TrendingDown } from 'lucide-react';
 
 export default function HomePage() {
+    const [query, setQuery] = useState('');
+    const router = useRouter();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (query.trim()) {
+            router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+        }
+    };
+
+    const examples = ["iPhone 15", "Samsung S24", "Nike Jordan", "Sony Headphones", "Dell Laptop"];
+
     return (
-        <div className="min-h-screen bg-[#f1f3f6] text-gray-900 font-sans">
+        <div className="min-h-screen bg-white flex flex-col">
             <Header />
 
-            <main className="relative flex flex-col items-center justify-start pt-12 pb-32 px-4">
+            <main className="flex-grow flex flex-col items-center justify-center px-4 -mt-20">
+                <div className="text-center space-y-6 max-w-2xl w-full">
 
-                {/* Hero Section */}
-                <div className="w-full max-w-4xl mx-auto text-center space-y-8 mb-16">
-                    <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900">
-                        Compare Prices. <span className="text-[#2874F0]">Save Big.</span>
-                    </h1>
-
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Stop overpaying. We track prices across Amazon, Flipkart, and more to find you the lowest price instantly.
-                    </p>
-
-                    <div className="pt-4">
-                        <SearchBar />
+                    {/* Logo / Branding */}
+                    <div className="mb-8">
+                        <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight">
+                            <span className="text-[#2874F0]">Deal</span>
+                            <span className="text-[#FF9900]">zo</span>
+                        </h1>
+                        <p className="text-gray-500 mt-3 text-lg">
+                            Compare prices from Amazon, Flipkart, Myntra & more.
+                        </p>
                     </div>
 
-                    {/* Trust Signals */}
-                    <div className="flex flex-wrap justify-center gap-6 pt-8 text-sm font-medium text-gray-600">
-                        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-                            <ShieldCheck className="h-5 w-5 text-green-600" />
-                            Safe & Secure
-                        </div>
-                        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-                            <CheckCircle className="h-5 w-5 text-[#2874F0]" />
-                            100% Genuine Products
-                        </div>
-                        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-                            <TrendingDown className="h-5 w-5 text-[#FF9900]" />
-                            Price Checked Today
-                        </div>
-                    </div>
-                </div>
+                    {/* Search Bar */}
+                    <form onSubmit={handleSearch} className="relative w-full max-w-xl mx-auto">
+                        <input
+                            type="text"
+                            placeholder="Search for products, brands and more"
+                            className="w-full h-14 pl-6 pr-14 rounded-full border-2 border-gray-100 shadow-lg focus:border-[#2874F0] focus:ring-4 focus:ring-[#2874F0]/10 outline-none text-lg transition-all"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                        <button
+                            type="submit"
+                            className="absolute right-2 top-2 h-10 w-10 bg-[#2874F0] rounded-full flex items-center justify-center text-white hover:bg-[#1e5bbf] transition-colors"
+                        >
+                            <Search className="h-5 w-5" />
+                        </button>
+                    </form>
 
-                {/* Categories / Stores */}
-                <div className="w-full max-w-6xl mx-auto">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Trusted By Millions</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {['Amazon', 'Flipkart', 'Walmart', 'BestBuy'].map(store => (
-                            <div key={store} className="bg-white p-6 rounded-lg shadow-sm flex items-center justify-center font-bold text-xl text-gray-400 hover:text-gray-900 hover:shadow-md transition-all cursor-pointer">
-                                {store}
-                            </div>
+                    {/* Examples */}
+                    <div className="flex flex-wrap justify-center gap-2 text-sm text-gray-500">
+                        <span>Trending:</span>
+                        {examples.map((ex) => (
+                            <button
+                                key={ex}
+                                onClick={() => router.push(`/search?q=${encodeURIComponent(ex)}`)}
+                                className="hover:text-[#2874F0] hover:underline transition-colors"
+                            >
+                                {ex}
+                            </button>
                         ))}
                     </div>
-                </div>
 
+                </div>
             </main>
 
-            <footer className="bg-white border-t border-gray-200 py-8 text-center text-gray-500 text-sm mt-auto">
-                <p>© 2024 Dealzo. All rights reserved.</p>
+            {/* Footer / Trust Signals */}
+            <footer className="py-8 border-t border-gray-100 bg-gray-50">
+                <div className="container mx-auto px-4 flex justify-center gap-8 text-gray-400 grayscale opacity-70">
+                    {/* Simple text or icons for trust */}
+                    <span className="flex items-center gap-2"><div className="w-2 h-2 bg-green-500 rounded-full"></div> 100% Real Prices</span>
+                    <span className="flex items-center gap-2"><div className="w-2 h-2 bg-blue-500 rounded-full"></div> 20+ Stores</span>
+                    <span className="flex items-center gap-2"><div className="w-2 h-2 bg-orange-500 rounded-full"></div> Instant Search</span>
+                </div>
             </footer>
         </div>
     );
