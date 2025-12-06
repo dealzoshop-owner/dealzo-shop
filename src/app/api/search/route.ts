@@ -88,25 +88,34 @@ export async function POST(req: NextRequest) {
             delivery: item.shipping || 'Free Delivery',
             isFlipkartAssured: (item.source || '').toLowerCase().includes('flipkart'),
             inStock: true,
-        }))
-            .filter((p: Product) => p.price > 100 && p.link && p.link.startsWith('http') && !p.link.includes('google.com/url'));
+        }));
+
+        console.log(`[API] Found ${products.length} raw items from SerpApi`);
+
+        const filteredProducts = products.filter((p: Product) => {
+            // Relaxed filter: just check for price and existence of link
+            const isValid = p.price > 0 && p.link && p.link.length > 0;
+            return isValid;
+        });
+
+        console.log(`[API] ${filteredProducts.length} products remained after filtering`);
 
         // 2. Group Products
         const groups: ProductGroup[] = [];
         const usedIndices = new Set<number>();
 
-        for (let i = 0; i < products.length; i++) {
+        for (let i = 0; i < filteredProducts.length; i++) {
             if (usedIndices.has(i)) continue;
 
-            const baseProduct = products[i];
+            const baseProduct = filteredProducts[i];
             const normBase = normalizeTitle(baseProduct.title);
             const groupVariants: Product[] = [baseProduct];
             usedIndices.add(i);
 
-            for (let j = i + 1; j < products.length; j++) {
+            for (let j = i + 1; j < filteredProducts.length; j++) {
                 if (usedIndices.has(j)) continue;
 
-                const candidate = products[j];
+                const candidate = filteredProducts[j];
                 const normCand = normalizeTitle(candidate.title);
 
                 // Group if similarity > 0.6 (adjustable)
