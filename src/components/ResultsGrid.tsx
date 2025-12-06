@@ -35,7 +35,7 @@ export default function ResultsGrid({ results, loading }: { results: ProductGrou
     }
 
     return (
-        <div className="space-y-4 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
             {results.map((group) => (
                 <ComparisonCard
                     key={group.id}

@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({
             query: raw,
-            groups: groups.slice(0, 20),
+            groups: groups, // Return ALL groups, no slicing
             total: groups.length
         });
 
