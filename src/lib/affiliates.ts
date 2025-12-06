@@ -1,5 +1,32 @@
 import { Product } from './types';
 
+export const AFFILIATE_TAGS = {
+    amazon: "dealzo21-21",          // ← YOUR REAL TAG
+    flipkart: "dealzoshop",         // ← put your Flipkart ID later (or keep this for now)
+    default: "dealzo21-21"
+};
+
+export function convertToAffiliateLink(url: string): string {
+    if (!url) return url;
+
+    // Amazon India
+    if (url.includes("amazon.in") || url.includes("amzn.to") || url.includes("amazon.com")) {
+        const tag = AFFILIATE_TAGS.amazon;
+        if (url.includes("tag=")) {
+            return url.replace(/tag=[^&]*/, `tag=${tag}`);
+        }
+        return url.includes("?") ? `${url}&tag=${tag}` : `${url}?tag=${tag}`;
+    }
+
+    // Flipkart (will activate when you get Flipkart ID)
+    if (url.includes("flipkart.com") && AFFILIATE_TAGS.flipkart) {
+        const flipkartId = AFFILIATE_TAGS.flipkart;
+        return `${url}${url.includes("?") ? "&" : "?"}affid=${flipkartId}`;
+    }
+
+    return url;
+}
+
 // Mock data generators
 const generateMockProduct = (store: Product['store'], query: string, index: number): Product => {
     const basePrice = Math.floor(Math.random() * 500) + 50;
