@@ -1,42 +1,38 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
+    const baseUrl = "https://www.dealzoshop.com";
+
     return [
         {
-            url: 'https://www.dealzoshop.com',
+            url: baseUrl,
             lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 1,
+            changeFrequency: "daily",
+            priority: 1.0,
         },
         {
-            url: 'https://www.dealzoshop.com/about',
+            url: `${baseUrl}/about`,
             lastModified: new Date(),
-            changeFrequency: 'monthly',
+            changeFrequency: "monthly",
             priority: 0.8,
         },
         {
-            url: 'https://www.dealzoshop.com/contact',
+            url: `${baseUrl}/contact`,
             lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
-        {
-            url: 'https://www.dealzoshop.com/privacy',
-            lastModified: new Date(),
-            changeFrequency: 'yearly',
-            priority: 0.5,
-        },
-        {
-            url: 'https://www.dealzoshop.com/terms',
-            lastModified: new Date(),
-            changeFrequency: 'yearly',
-            priority: 0.5,
-        },
-        {
-            url: 'https://www.dealzoshop.com/faq',
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
+            changeFrequency: "monthly",
             priority: 0.7,
+        },
+        {
+            url: `${baseUrl}/faq`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.7,
+        },
+        {
+            url: `${baseUrl}/dealzo`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.9,
         },
     ];
 }
