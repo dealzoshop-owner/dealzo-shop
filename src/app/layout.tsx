@@ -7,8 +7,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.dealzoshop.com'),
-  title: 'DealzoShop – Official Website | India’s Smartest Price Comparison',
-  description: 'Welcome to DealzoShop, India’s fastest and smartest price comparison engine. Search across Amazon, Flipkart, Croma, Blinkit and more. Get the best deal every time.',
+  title: 'Dealzo – Official Website (DealzoShop) | India’s Smartest Price Comparison Platform',
+  description: "Dealzo (DealzoShop) is India's fastest price comparison website. Compare prices across Amazon, Flipkart, Croma and more.",
   openGraph: {
     title: "DealzoShop - Best Price Comparison & Deals",
     description: "Compare prices across top stores instantly.",

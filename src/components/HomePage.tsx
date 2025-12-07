@@ -39,6 +39,9 @@ export default function HomePage() {
                         <p className="text-gray-500 mt-2">
                             Compare prices across Amazon, Flipkart, Myntra & 50+ stores instantly.
                         </p>
+                        <p className="text-blue-600 font-medium mt-4 text-sm bg-blue-50 inline-block px-4 py-1 rounded-full">
+                            Dealzo (also known as DealzoShop) is India’s smartest price comparison platform.
+                        </p>
                     </div>
 
                     {/* Search Bar */}
@@ -256,7 +259,7 @@ export default function HomePage() {
                         </div>
                     </div>
                     <div className="border-t border-gray-800 pt-8 text-center text-sm">
-                        <p>&copy; 2025 Dealzo Technologies · All Rights Reserved</p>
+                        <p>&copy; 2025 Dealzo | DealzoShop – Official Price Comparison Platform</p>
                     </div>
                 </div>
             </footer>
